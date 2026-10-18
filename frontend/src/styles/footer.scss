@@ -1,0 +1,127 @@
+.footer {
+  background-color: var(--color-surface);
+  border-top: 1px solid var(--color-line);
+  padding: 64px 24px 24px;
+  margin-top: auto; // Empurra o footer para o fundo da página
+
+  &__container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 48px;
+    margin-bottom: 64px;
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+  }
+
+  &__col {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  &__logo {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-text);
+    text-transform: uppercase;
+    text-decoration: none;
+    letter-spacing: 0.5px;
+  }
+
+  &__title {
+    font-size: 1.1rem;
+    color: var(--color-text);
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  &__desc {
+    color: var(--color-muted);
+    line-height: 1.6;
+    max-width: 400px;
+    font-size: 0.95rem;
+  }
+
+  &__nav {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    a {
+      color: var(--color-muted);
+      text-decoration: none;
+      transition: color 0.2s;
+      font-size: 0.95rem;
+
+      &:hover {
+        color: var(--color-accent);
+      }
+    }
+  }
+
+  &__contact-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    li {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      color: var(--color-muted);
+      font-size: 0.95rem;
+      line-height: 1.4;
+
+      svg {
+        flex-shrink: 0;
+        margin-top: 2px;
+      }
+
+      a {
+        color: var(--color-muted);
+        text-decoration: none;
+        transition: color 0.2s;
+
+        &:hover {
+          color: var(--color-accent);
+        }
+      }
+    }
+  }
+
+  &__bottom {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-top: 24px;
+    border-top: 1px solid var(--color-line);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--color-muted);
+    font-size: 0.85rem;
+
+    @media (max-width: 600px) {
+      flex-direction: column;
+      gap: 12px;
+      text-align: center;
+    }
+  }
+
+  &__developer {
+    a {
+      color: var(--color-accent);
+      font-weight: 600;
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}

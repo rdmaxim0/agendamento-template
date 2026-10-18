@@ -1,0 +1,20 @@
+// O botão agora vive dentro do header (lado direito), então não é mais
+// position: fixed: o próprio header decide onde ele fica.
+.theme-toggle {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0; // não deixa o botão ser espremido em telas pequenas
+  width: 40px;
+  height: 40px;
+  border-radius: 10px; // mesmo arredondamento dos botões Entrar/Sair
+  border: 1px solid var(--color-line-strong);
+  background: transparent;
+  color: var(--color-text);
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease;
+
+  &:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+  }
+}

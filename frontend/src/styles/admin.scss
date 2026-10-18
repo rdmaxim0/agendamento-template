@@ -1,0 +1,199 @@
+.admin {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  &__tabs {
+    display: flex;
+    gap: 8px;
+  }
+
+  &__tab {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    background: var(--color-surface);
+    color: var(--color-muted);
+    cursor: pointer;
+
+    &--active {
+      background: var(--color-primary);
+      color: var(--color-on-primary);
+      font-weight: 600;
+    }
+  }
+
+  &__section {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  &__filter {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    color: var(--color-muted);
+    font-size: 0.9rem;
+    max-width: 260px;
+  }
+
+  select,
+  input {
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid var(--color-line-strong);
+    background: var(--color-bg);
+    color: var(--color-text);
+    font-size: 1rem;
+  }
+
+  &__empty {
+    color: var(--color-muted);
+  }
+
+  &__card {
+    background: var(--color-surface);
+    padding: 16px;
+    border-radius: 12px;
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  &__info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    span {
+      color: var(--color-muted);
+      font-size: 0.9rem;
+    }
+  }
+
+  &__side {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+  }
+
+  &__actions {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+
+    button {
+      padding: 6px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--color-primary);
+      background: none;
+      color: var(--color-accent);
+      cursor: pointer;
+
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+    }
+  }
+
+  &__danger {
+    border-color: var(--color-danger) !important;
+    color: var(--color-danger) !important;
+  }
+
+  &__badge {
+    font-size: 0.8rem;
+    padding: 4px 10px;
+    border-radius: 999px;
+
+    &--pending {
+      background: var(--color-pending-bg);
+      color: var(--color-accent);
+    }
+
+    &--confirmed {
+      background: var(--color-success-bg);
+      color: var(--color-success);
+    }
+
+    &--cancelled {
+      background: var(--color-danger-bg);
+      color: var(--color-danger);
+    }
+  }
+
+  &__expire {
+    font-size: 0.8rem;
+    color: var(--color-accent);
+
+    &--urgent {
+      color: var(--color-danger);
+      font-weight: 600;
+    }
+  }
+
+  &__form {
+    background: var(--color-surface);
+    padding: 20px;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    h2 {
+      font-size: 1.1rem;
+    }
+
+    label {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 0.9rem;
+      color: var(--color-muted);
+      flex: 1;
+    }
+  }
+
+  &__row {
+    display: flex;
+    gap: 12px;
+  }
+
+  &__error {
+    color: var(--color-danger);
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .admin {
+    padding: 16px;
+
+    &__row {
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    &__card {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 16px;
+    }
+
+    &__side {
+      align-items: flex-start;
+      width: 100%;
+    }
+
+    &__actions {
+      width: 100%;
+      justify-content: flex-end;
+    }
+  }
+}

@@ -1,0 +1,301 @@
+.header {
+  // A magia do Glassmorphism: Fundo semi-transparente e desfoque do que está por trás
+  background-color: color-mix(in srgb, var(--color-surface) 10%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px); // Suporte para Safari/iOS
+
+  padding: 16px 24px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+
+  &__container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative; // Fundamental para o logo ficar centrado de forma absoluta
+  }
+
+  &__left, &__right {
+    flex: 1;
+    display: flex;
+  }
+
+  &__left {
+    justify-content: flex-start;
+  }
+
+  &__right {
+    justify-content: flex-end;
+    align-items: center; // alinha tema e Entrar/Sair na mesma linha
+    gap: 8px; // espaço entre o botão de tema e o Entrar/Sair
+  }
+
+  &__logo {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%); // Centra perfeitamente no ecrã
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--color-text);
+    text-decoration: none;
+    letter-spacing: 0.5px;
+    white-space: nowrap; // Impede que o texto quebre de linha
+    text-transform: uppercase;
+  }
+
+  &__menu-btn {
+    background: none;
+    border: none;
+    color: var(--color-text);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+    border-radius: 8px;
+    transition: color 0.2s;
+
+    &:hover {
+      color: var(--color-accent);
+    }
+  }
+
+  &__link {
+    &--login {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background-color: color-mix(in srgb, var(--color-accent) 10%, transparent); // fundo suave
+      color: var(--color-accent); // texto dourado legível no claro
+      padding: 10px 20px;
+      border-radius: 10px;
+      border: 1px solid transparent;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.95rem;
+      transition: all 0.2s;
+
+      &:hover {
+        background-color: color-mix(in srgb, var(--color-accent) 20%, transparent);
+        border-color: var(--color-accent);
+      }
+    }
+  }
+
+  &__logout-btn {
+    background: transparent;
+    border: 1px solid var(--color-line-strong);
+    border-radius: 10px;
+    color: var(--color-muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background-color: color-mix(in srgb, var(--color-danger) 10%, transparent);
+      border-color: var(--color-danger);
+      color: var(--color-danger);
+    }
+  }
+}
+
+/* =========================================
+   SIDEBAR & OVERLAY (Menu Lateral 70%)
+   ========================================= */
+
+.sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.6); // Fundo escurecido
+  backdrop-filter: blur(2px); // Desfoca levemente o fundo
+  z-index: 998;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+
+  &--open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 70%; // Ocupa exatamente 70% da tela no mobile
+  max-width: 320px; // Limite para não ficar gigante num tablet
+  height: 100vh;
+   background-color: color-mix(in srgb, var(--color-surface) 50%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px); // Suporte para Safari/iOS
+  z-index: 999;
+  transform: translateX(-100%); // Escondida fora do ecrã à esquerda
+  transition: transform 0.3s ease; // Deslize suave
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow-md);
+
+  &--open {
+    transform: translateX(0); // Entra no ecrã
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 24px;
+  }
+
+  &__logo {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-text);
+  }
+
+  &__close-btn {
+    background: none;
+    border: none;
+    color: var(--color-muted);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    display: flex;
+    
+    &:hover {
+      color: var(--color-danger);
+      background: color-mix(in srgb, var(--color-danger) 10%, transparent);
+    }
+  }
+
+  &__user-info {
+    padding: 0 24px 24px 24px;
+    border-bottom: 1px solid var(--color-line);
+
+    p {
+      font-size: 1.1rem;
+      color: var(--color-text);
+      margin-bottom: 4px;
+    }
+
+    small {
+      color: var(--color-muted);
+      font-size: 0.85rem;
+    }
+  }
+
+  &__nav {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 24px 16px;
+    gap: 8px;
+  }
+
+  &__link {
+    padding: 16px;
+    border-radius: 12px;
+    color: var(--color-text);
+    text-decoration: none;
+    font-size: 1.05rem;
+    font-weight: 500;
+    transition: all 0.2s;
+
+    &:hover {
+      background: color-mix(in srgb, var(--color-accent) 10%, transparent); // fundo mais suave no tema claro
+      color: var(--color-accent);
+      padding-left: 20px; // Efeito hover
+    }
+  }
+
+  &__footer {
+    padding: 24px;
+    border-top: 1px solid var(--color-line);
+  }
+
+  &__logout-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 14px;
+    border-radius: 12px;
+    border: 1px solid var(--color-danger);
+    background: transparent;
+    color: var(--color-danger);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover {
+      background: color-mix(in srgb, var(--color-danger) 10%, transparent);
+    }
+  }
+}
+
+// Responsividade: Esconde textos no mobile e deixa só os ícones
+@media (max-width: 600px) {
+  .hide-mobile {
+    display: none !important;
+  }
+  
+  .header {
+    padding: 16px;
+    
+    &__logout-btn {
+      padding: 8px;
+      border: none; // Tira a borda para ficar apenas o ícone vermelho limpo
+    }
+
+    &__link--login {
+      padding: 8px 12px;
+    }
+  }
+}
+
+/* =========================================
+   COMPORTAMENTO: MENU FIXO DO ADMIN (PINNED)
+   ========================================= */
+body.sidebar-pinned {
+  @media (min-width: 1024px) {
+    padding-left: 280px; // Empurra todo o site (inclusive a Home) para a direita
+    transition: padding-left 0.3s ease;
+
+    .header {
+      width: calc(100% - 100px); // Encurta o header principal
+      left: 160px; // Posiciona o header depois do menu
+    }
+
+    .sidebar {
+      transform: translateX(0) !important; // Mantém a sidebar sempre visível
+      width: 280px;
+      border-right: 1px solid var(--color-line);
+      box-shadow: none;
+    }
+
+    .sidebar-overlay {
+      display: none !important; // Remove o fundo escuro (pois não está a flutuar)
+    }
+
+    .header__menu-btn {
+      display: none; // Esconde o hambúrguer no header já que a sidebar está aberta
+    }
+
+    .hide-on-pinned {
+      display: none; // Esconde o botão de "X" fechar dentro da sidebar
+    }
+  }
+}

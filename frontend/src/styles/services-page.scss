@@ -1,0 +1,144 @@
+/* =====================================================
+   PÁGINA /servicos (catálogo completo, vindo da API)
+   A seção de serviços da Home tem o próprio arquivo: services-menu.scss
+   ===================================================== */
+.services-page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 48px 24px 80px;
+
+  /* Título e frase de apoio, alinhados à esquerda */
+  &__header {
+    max-width: 560px;
+    margin-bottom: 40px;
+
+    h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 600;
+      line-height: 1.1;
+      margin-bottom: 12px;
+    }
+
+    p {
+      color: var(--color-muted);
+      line-height: 1.6;
+    }
+  }
+
+  // Mensagens de carregando, erro e lista vazia
+  &__status {
+    color: var(--color-muted);
+  }
+
+  /* Quantas colunas couberem, cada uma com pelo menos 300px.
+     min(100%, 300px) evita estourar a largura em telas muito estreitas. */
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+    gap: 20px;
+  }
+}
+
+/* =====================================================
+   CARD DE SERVIÇO
+   O brilho dourado no topo só aparece ao passar o mouse (ou focar no botão)
+   ===================================================== */
+.premium-card {
+  position: relative;
+  overflow: hidden; // o brilho respeita as bordas arredondadas
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: 16px;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+
+  &__glow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 140px;
+    background: radial-gradient(ellipse at top, rgba(212, 162, 76, 0.2), transparent 70%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none; // não atrapalha o clique no conteúdo
+  }
+
+  &:hover,
+  &:focus-within {
+    border-color: var(--color-primary);
+    box-shadow: var(--shadow-md);
+
+    .premium-card__glow {
+      opacity: 1;
+    }
+  }
+
+  &__content {
+    position: relative; // fica por cima do brilho
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    height: 100%; // cards da mesma linha ficam com a mesma altura
+    padding: 28px 24px;
+
+    h2 {
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      font-weight: 600;
+      line-height: 1.2;
+    }
+  }
+
+  // flex: 1 empurra duração, preço e botão para o fim do card
+  &__desc {
+    flex: 1;
+    color: var(--color-muted);
+    line-height: 1.5;
+  }
+
+  /* Duração à esquerda, preço à direita */
+  &__meta {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 8px;
+    padding-top: 16px;
+    border-top: 1px solid var(--color-line);
+  }
+
+  &__duration {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.9rem;
+    color: var(--color-muted);
+
+    svg {
+      color: var(--color-accent); // dourado legível nos dois temas
+    }
+  }
+
+  &__price {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--color-accent);
+    font-variant-numeric: lining-nums tabular-nums;
+  }
+
+  // Usa o .btn--outline do global.scss; aqui só ocupa a largura toda
+  &__btn {
+    width: 100%;
+  }
+
+  // Em telas com mouse, o botão enche de dourado quando o card está em foco
+  @media (hover: hover) {
+    &:hover &__btn {
+      background: var(--color-primary);
+      border-color: var(--color-primary);
+      color: var(--color-on-primary);
+    }
+  }
+}

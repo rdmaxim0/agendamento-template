@@ -1,0 +1,125 @@
+.location {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 24px;
+  width: 100%;
+
+  /* Cartão único: informações à esquerda, mapa à direita */
+  &__card {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+    background: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: 20px;
+    overflow: hidden; // o mapa respeita as bordas arredondadas
+    box-shadow: var(--shadow-md);
+
+    @media (max-width: 800px) {
+      grid-template-columns: minmax(0, 1fr); // permite a coluna encolher no celular
+    }
+  }
+
+  &__info {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    padding: clamp(28px, 5vw, 48px);
+
+    h2 {
+      font-family: var(--font-display);
+      font-size: clamp(1.9rem, 4vw, 2.4rem);
+      font-weight: 600;
+      line-height: 1.1;
+    }
+  }
+
+  /* "Aberto agora" / "Fechado agora" com bolinha de status e fundo */
+  &__status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    width: fit-content;
+    font-size: 0.95rem;
+    font-weight: 600;
+    padding: 6px 14px; // Cria o volume do fundo
+    border-radius: 999px; // Deixa as bordas arredondadas como um selo (badge)
+
+    &::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    &--open {
+      color: var(--color-success);
+      background-color: var(--color-success-bg);
+    }
+
+    &--closed {
+      color: var(--color-danger);
+      background-color: var(--color-danger-bg);
+    }
+  }
+
+  &__list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+
+    li {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      line-height: 1.5;
+    }
+
+    svg {
+      flex-shrink: 0;
+      margin-top: 2px;
+      color: var(--color-accent);
+    }
+
+    a {
+      color: inherit;
+      transition: color 0.2s ease;
+
+      &:hover {
+        color: var(--color-accent);
+      }
+    }
+  }
+
+  &__hours {
+    display: flex;
+    flex-direction: column;
+
+    span:last-child {
+      color: var(--color-muted);
+    }
+  }
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  /* O iframe ocupa todo o espaço da coluna */
+  &__map {
+    position: relative;
+    min-height: 360px;
+
+    iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+      filter: var(--map-filter); // escurece o mapa só no tema dark
+    }
+  }
+}

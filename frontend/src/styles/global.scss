@@ -1,0 +1,145 @@
+/* =====================================================
+   TOKENS DE TEMA
+   Todas as cores do site vêm destas variáveis. Para trocar de
+   tema, só mudamos o atributo data-theme na tag <html>
+   (feito pelo hook useTheme) e o CSS inteiro se adapta.
+   ===================================================== */
+
+// Tema escuro: é o padrão, por isso vale para :root e para data-theme="dark"
+:root,
+:root[data-theme='dark'] {
+  color-scheme: dark; // faz scrollbar e campos nativos acompanharem o tema
+
+  --color-bg: #0f0f12;
+  --color-surface: #1e1e24;
+  --color-line: #2e2e38; // bordas discretas
+  --color-line-strong: #43434f; // bordas de botões e destaques
+  --color-text: #f2f2f2;
+  --color-muted: #9a9aa5;
+
+  --color-primary: #d4a24c; // dourado: fundos de botão
+  --color-on-primary: #0f0f12; // texto que fica em cima do dourado
+  --color-accent: #d4a24c; // dourado para texto e ícones
+  --color-success: #4ade80;
+  --color-success-bg: #1d3a29; // fundo do selo "Confirmada"
+  --color-danger: #ff6b6b; // erros, cancelar, remover
+  --color-danger-bg: #3a2222; // fundo do selo "Cancelada"
+  --color-pending-bg: #3d3320; // fundo do selo "Aguardando pagamento"
+  --color-disabled: #444; // dias/itens desabilitados
+
+  --hero-img-opacity: 0.6; // quanto o slider "escurece" a foto
+  --map-filter: invert(92%) hue-rotate(180deg) contrast(0.9) saturate(0.8); // mapa escuro
+
+  --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.7);
+}
+
+// Tema claro: tem mais especificidade (:root + atributo), então sobrescreve o escuro
+:root[data-theme='light'] {
+  color-scheme: light;
+
+  --color-bg: #f5f5f7;
+  --color-surface: #ffffff;
+  --color-line: #e2e2e8;
+  --color-line-strong: #c4c4cf;
+  --color-text: #17171c;
+  --color-muted: #5f5f6b;
+
+  --color-primary: #d4a24c;
+  --color-on-primary: #17171c;
+  --color-accent: #8a5d0c; // dourado mais escuro: o #d4a24c some em fundo branco
+  --color-success: #15803d;
+  --color-success-bg: #e3f5ea;
+  --color-danger: #c62828; // vermelho mais escuro: o claro some no fundo branco
+  --color-danger-bg: #fdecec;
+  --color-pending-bg: #fbf0da;
+  --color-disabled: #b4b4be;
+
+  --hero-img-opacity: 0.9;
+  --map-filter: none; // o mapa do Google já é claro
+
+  --shadow-sm: 0 4px 6px -1px rgba(20, 20, 30, 0.08);
+  --shadow-md: 0 12px 24px -6px rgba(20, 20, 30, 0.14);
+}
+
+// Fonte de títulos e preços (carregada no index.html). Se falhar, cai no Georgia.
+:root {
+  --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
+}
+
+/* =====================================================
+   BASE
+   ===================================================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: system-ui, sans-serif;
+  background: var(--color-bg);
+  color: var(--color-text);
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.3s ease, color 0.3s ease; // troca de tema suave
+}
+
+a {
+  text-decoration: none;
+}
+
+// Contorno visível para quem navega com teclado (acessibilidade)
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+}
+
+// Respeita quem desativou animações no sistema
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
+
+/* =====================================================
+   BOTÕES REUTILIZÁVEIS
+   Uso: <a className="btn btn--primary"> ou "btn btn--outline"
+   ===================================================== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px 24px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+
+  // Botão cheio dourado (ação principal)
+  &--primary {
+    background: var(--color-primary);
+    color: var(--color-on-primary);
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 22px rgba(212, 162, 76, 0.3);
+    }
+  }
+
+  // Botão só com borda (ação secundária)
+  &--outline {
+    border-color: var(--color-line-strong);
+    color: var(--color-text);
+
+    &:hover {
+      border-color: var(--color-accent);
+      color: var(--color-accent);
+    }
+  }
+}

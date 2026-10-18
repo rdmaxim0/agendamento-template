@@ -1,0 +1,108 @@
+.home {
+  display: flex;
+  flex-direction: column;
+  // Espaço entre as seções: cresce com a tela, mas com mínimo e máximo
+  gap: clamp(48px, 8vw, 96px);
+  padding-bottom: 80px;
+  // Rede de segurança: nada dentro da Home cria rolagem lateral.
+  // "clip" (e não "hidden") não quebra o header sticky.
+  overflow-x: clip;
+
+  /* =====================
+     CARROSSEL DE IMAGENS
+     ===================== */
+  &__slider {
+    position: relative;
+    width: 100%;
+    height: 40vh;
+    min-height: 250px;
+    max-height: 500px;
+    overflow: hidden;
+    background-color: var(--color-bg);
+
+    &-img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      transition: opacity 1.5s ease-in-out;
+
+      &--active {
+        // Variável definida no global.scss: 0.6 no escuro e 0.9 no claro
+        opacity: var(--hero-img-opacity);
+      }
+    }
+
+    &-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 150px;
+      // Esfumaça a foto até a cor do fundo (funciona nos dois temas)
+      background: linear-gradient(to bottom, transparent 0%, var(--color-bg) 100%);
+    }
+  }
+
+  /* =====================
+     HERO CONTENT
+     ===================== */
+  &__hero {
+    padding: 0 24px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    margin-top: -60px;
+    position: relative;
+    z-index: 10;
+  }
+
+  &__hero-content {
+    max-width: 700px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+
+    h1 {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      color: var(--color-text);
+      line-height: 1.1;
+      font-weight: 800;
+      letter-spacing: -1px;
+    }
+
+    p {
+      font-size: 1.15rem;
+      color: var(--color-muted);
+      line-height: 1.6;
+      max-width: 500px;
+    }
+  }
+
+  &__cta {
+    margin-top: 16px;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    background-color: var(--color-primary);
+    color: var(--color-on-primary); // antes era #0f0f12 fixo
+    padding: 18px 36px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    text-decoration: none;
+    transition: all 0.3s ease;
+
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 25px rgba(212, 162, 76, 0.35);
+    }
+  }
+}
+
+// As seções de serviços e localização agora têm seus próprios
+// arquivos: services.scss e location.scss
