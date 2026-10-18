@@ -28,12 +28,9 @@ const cpfMask = (value: string) => {
 
 export default function Register() {
   const navigate = useNavigate();
-  const { register, handleSubmit, setValue, watch, formState: { errors, isSubmitting } } = useForm<RegisterData>({
+  const { register, handleSubmit, setValue, formState: { errors, isSubmitting } } = useForm<RegisterData>({
     resolver: zodResolver(registerSchema),
   });
-
-  // O watch é necessário para o React Hook Form acompanhar as mudanças da máscara
-  const cpfValue = watch('cpf');
 
   async function handleRegister(data: RegisterData) {
     try {
