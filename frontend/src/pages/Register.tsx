@@ -53,13 +53,13 @@ export default function Register() {
         {/* Nome e Sobrenome agora em blocos separados com 100% de largura */}
         <label>
           Nome
-          <input type="text" placeholder="Ex: Rodrigo" {...register('name')} />
+          <input type="text" placeholder="Ex: João" {...register('name')} />
           {errors.name && <span className="auth__error">{errors.name.message}</span>}
         </label>
         
         <label>
           Sobrenome
-          <input type="text" placeholder="Ex: Máximo" {...register('lastName')} />
+          <input type="text" placeholder="Ex: Lima" {...register('lastName')} />
           {errors.lastName && <span className="auth__error">{errors.lastName.message}</span>}
         </label>
 

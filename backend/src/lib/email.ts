@@ -21,7 +21,7 @@ export async function sendAppointmentEmail(
   try {
     // 1. E-mail para o Cliente
     await resend.emails.send({
-      from: 'Barbearia <onboarding@resend.dev>', // O Resend usa este remetente na versão gratuita
+      from: 'Agendamento | Site Modelo <contato@gjrmengenharia.com.br>', // O Resend usa este remetente na versão gratuita
       to: clientEmail,
       subject: 'Detalhes da sua reserva',
       html: `
@@ -41,7 +41,7 @@ export async function sendAppointmentEmail(
 
     // 2. E-mail para o Administrador (Você)
     await resend.emails.send({
-      from: 'Sistema de Reservas <onboarding@resend.dev>',
+      from: 'Agendamento | GJRM Engenharia <contato@gjrmengenharia.com.br>',
       to: ADMIN_EMAIL,
       subject: `NOVA RESERVA: ${serviceName} - ${clientName}`,
       html: `
