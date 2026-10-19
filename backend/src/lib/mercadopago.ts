@@ -58,7 +58,7 @@ export async function createPixPayment(data: PixData) {
       qrCodeBase64: transactionData.qr_code_base64!,
     };
   } catch (error: any) {
-    // 🚨 ESTE CONSOLE VAI MOSTRAR O MOTIVO EXATO DA REJEIÇÃO NA ABA "LOGS" DO RENDER
+    // ESTE CONSOLE VAI MOSTRAR O MOTIVO EXATO DA REJEIÇÃO NA ABA "LOGS" DO RENDER
     console.error('[PIX REJEITADO PELO MP]:', error.message || error);
     throw new Error('Não foi possível gerar o pagamento Pix.');
   }
