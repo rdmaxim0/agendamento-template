@@ -14,12 +14,15 @@ import { appointmentRoutes } from './routes/appointment.routes.js';
 export const prisma = new PrismaClient();
 const app = express();
 
+// 1. CORS Dinâmico: Aceita localhost e qualquer link gerado pela Vercel
 app.use(cors({
-  origin: [
-    'http://localhost:5173', 
-    'http://127.0.0.1:5173',
-    'https://agendamento-template-one.vercel.app' 
-  ],
+  origin: function (origin, callback) {
+    if (!origin || origin.includes('localhost') || origin.includes('127.0.0.1') || origin.endsWith('.vercel.app')) {
+      callback(null, true);
+    } else {
+      callback(new Error('Bloqueado pelo CORS'));
+    }
+  },
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   credentials: true,
   allowedHeaders: ['Content-Type', 'Authorization']
