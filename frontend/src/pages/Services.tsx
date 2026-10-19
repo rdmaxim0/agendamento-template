@@ -26,7 +26,8 @@ export default function Services() {
         <p className="services-page__status">Ainda não há serviços cadastrados.</p>
       )}
 
-      {services && services.length > 0 && (
+     {/* NOVA VERIFICAÇÃO: Garante que é um Array antes de listar */}
+      {Array.isArray(services) && services.length > 0 && (
         <div className="services-page__grid">
           {services.map((service, index) => (
             <motion.div

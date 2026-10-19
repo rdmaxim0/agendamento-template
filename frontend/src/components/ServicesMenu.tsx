@@ -23,29 +23,20 @@ export default function ServicesMenu() {
       {isError && <p style={{ color: 'var(--color-danger)' }}>Não foi possível carregar os serviços.</p>}
 
       <ul className="services__list">
-        {services?.slice(0, 4).map((service, index) => (
+        {/* NOVA VERIFICAÇÃO: Array.isArray(services) impede que a tela quebre se a API falhar */}
+        {Array.isArray(services) && services.slice(0, 4).map((service, index) => (
           <li
             key={service.id}
-            className={`services__item ${index === 3 ? 'services__item--featured' : ''}`}
+            className={`services__item ${index === 0 ? 'services__item--featured' : ''}`}
           >
-            {/* NOME E PREÇO NA MESMA LINHA */}
             <div className="services__row">
               <h3 className="services__name">{service.name}</h3>
+              {index === 0 && <span className="services__badge">Recomendado</span>}
               <span className="services__leader" aria-hidden="true" />
               <span className="services__price">
                 {formatPrice(service.price)}
               </span>
             </div>
-
-            {/* SELO NA LINHA DE BAIXO */}
-            {index === 3 && (
-              <span 
-                className="services__badge" 
-                style={{ alignSelf: 'flex-start', marginTop: '-4px', marginBottom: '4px' }}
-              >
-                Recomendado
-              </span>
-            )}
 
             <p className="services__desc">{service.description}</p>
 
