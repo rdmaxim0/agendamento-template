@@ -1,84 +1,79 @@
 import { MercadoPagoConfig, Payment } from 'mercadopago';
 
-// Instância do cliente do Mercado Pago
-// IMPORTANTE: Adicione MP_ACCESS_TOKEN="seu_token_aqui" no seu ficheiro .env
-const client = new MercadoPagoConfig({ accessToken: process.env.MP_ACCESS_TOKEN as string });
+// Configura o SDK do Mercado Pago
+const client = new MercadoPagoConfig({
+  accessToken: process.env.MP_ACCESS_TOKEN || '',
+  options: { timeout: 10000 } 
+});
+
 const payment = new Payment(client);
 
-interface PixProps {
- amount: number;
+interface PixData {
+  amount: number;
   description: string;
   payerEmail: string;
   payerFirstName: string;
   payerLastName: string;
-  payerCpf: string;       
+  payerCpf: string;
   appointmentId: string;
 }
 
-// 1. Função para CRIAR o pagamento
-export async function createPixPayment({ amount, description, payerEmail, payerFirstName, payerLastName, payerCpf, appointmentId }: PixProps) {
+export async function createPixPayment(data: PixData) {
   try {
-    const body = {
-      transaction_amount: Number(amount), // Garante que o valor é estritamente numérico
-      description: description,
-      payment_method_id: 'pix',
-      payer: {
-        email: payerEmail, // Passa a usar o e-mail real do cliente
-        first_name: payerFirstName,
-        last_name: payerLastName,
-        identification: {
-          type: 'CPF',
-          number: payerCpf.replace(/\D/g, '') // Mantemos um CPF genérico para evitar bloqueios da API
-        }
-      },
-      external_reference: appointmentId,
-    };
-
-    // Passamos a Idempotency Key exigida pelo Mercado Pago usando o ID da reserva
     const response = await payment.create({
-      body,
+      body: {
+        transaction_amount: data.amount,
+        description: data.description,
+        payment_method_id: 'pix',
+        payer: {
+          email: data.payerEmail,
+          first_name: data.payerFirstName || 'Cliente',
+          last_name: data.payerLastName || 'GJRM',
+          identification: {
+            type: 'CPF',
+            // O Mercado Pago em Produção pode recusar CPFs de teste mal formatados
+            number: data.payerCpf ? data.payerCpf.replace(/\D/g, '') : '19119119100', 
+          },
+        },
+        metadata: {
+          appointment_id: data.appointmentId,
+        },
+      },
       requestOptions: {
-        idempotencyKey: appointmentId
+        // Garantimos uma chave única para cada tentativa de Pix gerada
+        idempotencyKey: `pix_${data.appointmentId}_${Date.now()}` 
       }
     });
 
+    if (!response.point_of_interaction?.transaction_data) {
+      console.error('[MP Error]: Resposta sem dados de transação:', JSON.stringify(response));
+      throw new Error('Falha ao obter dados do Pix.');
+    }
+
+    const transactionData = response.point_of_interaction.transaction_data;
+
     return {
-      paymentId: response.id?.toString() || "",
-      status: response.status,
-      statusDetail: response.status_detail,
-      qrCode: response.point_of_interaction?.transaction_data?.qr_code || null,
-      qrCodeBase64: response.point_of_interaction?.transaction_data?.qr_code_base64 || null,
+      paymentId: response.id!.toString(),
+      qrCode: transactionData.qr_code!,
+      qrCodeBase64: transactionData.qr_code_base64!,
     };
   } catch (error: any) {
-    console.error("\n=== RAIO-X DO ERRO DO MERCADO PAGO ===");
-    console.error("Mensagem:", error.message);
-    if (error.cause) {
-      console.error("Causa (Array):", JSON.stringify(error.cause, null, 2));
-    }
-    if (error.response) {
-      console.error("Resposta Raw:", JSON.stringify(error.response, null, 2));
-    }
-    console.error("======================================\n");
-    
-    throw new Error("Falha na comunicação com o Mercado Pago.");
+    // 🚨 ESTE CONSOLE VAI MOSTRAR O MOTIVO EXATO DA REJEIÇÃO NA ABA "LOGS" DO RENDER
+    console.error('[PIX REJEITADO PELO MP]:', error.message || error);
+    throw new Error('Não foi possível gerar o pagamento Pix.');
   }
 }
 
-// 2. Função para CONSULTAR o pagamento (Polling)
 export async function getPixPayment(paymentId: string) {
   try {
     const response = await payment.get({ id: paymentId });
-
     return {
-      paymentId: response.id?.toString() || "",
-      status: response.status,
-      statusDetail: response.status_detail,
-      // Aqui, quando o status mudar de 'processing' para 'pending', o QR Code já virá preenchido
-      qrCode: response.point_of_interaction?.transaction_data?.qr_code || null,
-      qrCodeBase64: response.point_of_interaction?.transaction_data?.qr_code_base64 || null,
+      status: response.status,          
+      detail: response.status_detail,
+      amount: response.transaction_amount,
     };
   } catch (error) {
-    console.error(`[PIX] Erro ao consultar pagamento ${paymentId}:`, error);
-    throw new Error("Falha ao consultar status.");
+    console.error(`Erro ao consultar pagamento ${paymentId}:`, error);
+    throw new Error('Não foi possível consultar o pagamento.');
   }
 }
