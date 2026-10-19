@@ -1,6 +1,6 @@
 .header {
   // A magia do Glassmorphism: Fundo semi-transparente e desfoque do que está por trás
-  background-color: color-mix(in srgb, var(--color-surface) 10%, transparent);
+  background-color: color-mix(in srgb, var(--color-surface) 30%, transparent);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px); // Suporte para Safari/iOS
 

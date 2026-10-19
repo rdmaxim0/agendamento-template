@@ -15,7 +15,11 @@ export const prisma = new PrismaClient();
 const app = express();
 
 app.use(cors({
-  origin: ['http://localhost:5173', 'http://127.0.0.1:5173'], // Endereços do seu Vite
+  origin: [
+    'http://localhost:5173', 
+    'http://127.0.0.1:5173',
+    'https://agendamento-template-one.vercel.app' 
+  ],
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   credentials: true,
   allowedHeaders: ['Content-Type', 'Authorization']
