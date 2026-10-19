@@ -27,7 +27,7 @@ export default function ServicesMenu() {
         {Array.isArray(services) && services.slice(0, 4).map((service, index) => (
           <li
             key={service.id}
-            className={`services__item ${index === 0 ? 'services__item--featured' : ''}`}
+            className={`services__item ${index === 3 ? 'services__item--featured' : ''}`}
           >
             <div className="services__row">
               <h3 className="services__name">{service.name}</h3>
