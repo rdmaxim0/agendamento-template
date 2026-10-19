@@ -31,7 +31,7 @@ export default function ServicesMenu() {
           >
             <div className="services__row">
               <h3 className="services__name">{service.name}</h3>
-              {index === 0 && <span className="services__badge">Recomendado</span>}
+              {index === 3 && <span className="services__badge">Recomendado</span>}
               <span className="services__leader" aria-hidden="true" />
               <span className="services__price">
                 {formatPrice(service.price)}
