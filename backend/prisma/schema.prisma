@@ -27,6 +27,7 @@ model User {
 model Professional {
   id        String   @id @default(uuid())
   name      String
+  imageUrl  String?  // NOVO: Foto do profissional
   isActive  Boolean  @default(true) 
   
   services     Service[]     
@@ -40,6 +41,7 @@ model Service {
   id          String  @id @default(uuid())
   name        String
   description String?
+  imageUrl    String? // NOVO: Foto do serviço
   price       Float
   duration    Int 
 

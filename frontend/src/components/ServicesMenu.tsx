@@ -2,59 +2,74 @@ import { Link } from 'react-router-dom';
 import { CalendarPlus, Clock, Sparkle } from '@phosphor-icons/react';
 import { useServices } from '../hooks/useServices';
 import { useBookingLink } from '../hooks/useBookingLink';
-import '../styles/services-menu.scss';
 
-function formatPrice(value: number) {
-  return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-}
+// Um CSS em linha rápido para testar o luxo. Depois passamos para o arquivo .scss
+const minimalCardStyle = {
+  display: 'flex',
+  flexDirection: 'column' as const,
+  gap: '12px',
+  background: 'transparent',
+  border: 'none',
+};
+
+const imgStyle = {
+  width: '100%',
+  height: '240px',
+  objectFit: 'cover' as const,
+  borderRadius: '8px',
+  boxShadow: 'var(--shadow-sm)',
+};
 
 export default function ServicesMenu() {
   const bookingLink = useBookingLink();
-  const { data: services, isLoading, isError } = useServices();
+  const { data: services, isLoading } = useServices();
 
   return (
-    <section className="services" id="servicos" aria-labelledby="services-title">
-      <header className="services__header">
-        <h2 id="services-title">Tratamentos em Destaque</h2>
-        <p>A união perfeita entre técnica avançada e os melhores produtos do mercado.</p>
+    <section className="services" id="servicos" style={{ padding: '60px 20px', maxWidth: '1200px', margin: '0 auto' }}>
+      <header style={{ textAlign: 'center', marginBottom: '40px' }}>
+        <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '2.5rem', fontWeight: 400, color: 'var(--color-primary)' }}>
+          Experiências em Destaque
+        </h2>
+        <p style={{ color: 'var(--color-muted)', fontSize: '1.1rem', marginTop: '10px' }}>
+          Técnica avançada, produtos selecionados e um ambiente pensado para o seu relaxamento.
+        </p>
       </header>
 
-      {isLoading && <p style={{ color: 'var(--color-muted)' }}>A carregar tratamentos...</p>}
-      {isError && <p style={{ color: 'var(--color-danger)' }}>Não foi possível carregar as informações.</p>}
+      {isLoading && <p style={{ textAlign: 'center' }}>Buscando o catálogo...</p>}
 
-      <ul className="services__list">
-        {Array.isArray(services) && services.slice(0, 4).map((service, index) => (
-          <li
-            key={service.id}
-            className={`services__item ${index === 3 ? 'services__item--featured' : ''}`}
-          >
-            <div className="services__row">
-              <h3 className="services__name">{service.name}</h3>
-              {index === 3 && <span className="services__badge">Mais procurado</span>}
-              <span className="services__leader" aria-hidden="true" />
-              <span className="services__price">
-                {formatPrice(service.price)}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '32px' }}>
+        {Array.isArray(services) && services.slice(0, 4).map((service) => (
+          <article key={service.id} style={minimalCardStyle}>
+            {service.imageUrl ? (
+              <img src={service.imageUrl} alt={service.name} style={imgStyle} />
+            ) : (
+              <div style={{ ...imgStyle, background: 'var(--color-surface)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Sparkle size={32} color="var(--color-muted)" />
+              </div>
+            )}
+            
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginTop: '8px' }}>
+              <h3 style={{ fontSize: '1.2rem', fontWeight: 600, color: 'var(--color-text)' }}>{service.name}</h3>
+              <span style={{ fontSize: '1.1rem', color: 'var(--color-primary)', fontWeight: 500 }}>
+                {service.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
               </span>
             </div>
+            
+            <p style={{ color: 'var(--color-muted)', fontSize: '0.95rem', lineHeight: 1.5 }}>
+              {service.description}
+            </p>
 
-            <p className="services__desc">{service.description}</p>
-
-            <span className="services__duration">
-              <Clock size={16} />
-              {service.duration} min
+            <span style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--color-text)', fontSize: '0.9rem', opacity: 0.8 }}>
+              <Clock size={16} /> {service.duration} min
             </span>
-          </li>
+          </article>
         ))}
-      </ul>
+      </div>
 
-      <footer className="services__footer">
-        <p>
-          <Sparkle size={24} weight="duotone" />
-          A sua transformação começa aqui. Agendamento prático com confirmação instantânea.
-        </p>
-        <Link {...bookingLink} className="btn btn--primary">
+      <footer style={{ textAlign: 'center', marginTop: '60px' }}>
+        <Link {...bookingLink} className="btn btn--primary" style={{ padding: '16px 36px', fontSize: '1.1rem' }}>
           <CalendarPlus size={22} weight="bold" />
-          Ver disponibilidade
+          Agendar meu horário
         </Link>
       </footer>
     </section>

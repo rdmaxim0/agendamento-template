@@ -5,6 +5,7 @@ export interface Service {
     description: string | null; // no banco é opcional, então pode vir null
     price: number;
     duration: number; // em minutos
+    imageUrl: string | null;
 }
 
 // NOVO: Profissional para o painel de administração
@@ -12,6 +13,7 @@ export interface Professional {
   id: string;
   name: string;
   isActive: boolean;
+  imageUrl: string | null;
 }
 
 // Usuário que a API devolve no login (sem a senha, claro)
