@@ -6,6 +6,7 @@ interface CreateAppointmentPayload {
   startTime: string;
   customerName?: string;
   customerPhone?: string;
+  professionalId?: string | null;
   // NOVO: Métodos de pagamento e troco
   paymentMethod?: 'PIX' | 'PIX_MANUAL' | 'CASH';
   changeFor?: number;

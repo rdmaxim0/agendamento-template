@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { CalendarPlus, Clock, ShieldCheck, Sparkle } from '@phosphor-icons/react';
+import { CalendarPlus, Clock, Sparkle } from '@phosphor-icons/react';
 import { useServices } from '../hooks/useServices';
 import { useBookingLink } from '../hooks/useBookingLink';
 import '../styles/services-menu.scss';
