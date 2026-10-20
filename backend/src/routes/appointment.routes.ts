@@ -7,6 +7,7 @@ import type { AuthRequest } from '../middlewares/auth.middleware.js';
 import { getAvailableSlots } from '../lib/availability.js';
 import { createPixPayment, getPixPayment } from '../lib/mercadopago.js';
 
+
 export const appointmentRoutes = Router();
 
 const availableSchema = z.object({

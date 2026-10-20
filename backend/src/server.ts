@@ -6,15 +6,14 @@ import rateLimit from 'express-rate-limit';
 import { PrismaClient } from '@prisma/client';
 import { startCancelExpiredJob } from './jobs/cancelExpiredAppointments.js';
 
-// 1. As importações de TODAS as rotas
 import { authRoutes } from './routes/auth.routes.js';
 import { serviceRoutes } from './routes/service.routes.js'; 
 import { appointmentRoutes } from './routes/appointment.routes.js';
+import { professionalRoutes } from './routes/professional.routes.js';
 
 export const prisma = new PrismaClient();
 const app = express();
 
-// 1. CORS Dinâmico: Aceita localhost e qualquer link gerado pela Vercel
 app.use(cors({
   origin: function (origin, callback) {
     if (!origin || origin.includes('localhost') || origin.includes('127.0.0.1') || origin.endsWith('.vercel.app')) {
@@ -39,12 +38,11 @@ app.use(limiter);
 
 app.use(express.json());
 
-// 2. O Express liga os URLs aos ficheiros de rotas correspondentes
 app.use('/api/auth', authRoutes);
 app.use('/api/services', serviceRoutes); 
 app.use('/api/appointments', appointmentRoutes);
+app.use('/api/professionals', professionalRoutes);
 
-// Rota de Teste do Motor
 app.get('/ping', async (req, res) => {
   const servicesCount = await prisma.service.count();
   
