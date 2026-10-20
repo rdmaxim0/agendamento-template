@@ -82,7 +82,7 @@ appointmentRoutes.post('/', verifyToken, async (req: AuthRequest, res: any) => {
       data: {
         userId: req.userId as string,
         serviceId,
-        professionalId,
+        professionalId: professionalId || null,
         startTime,
         endTime,
         paymentMethod: isAdmin ? 'MANUAL' : paymentMethod,
