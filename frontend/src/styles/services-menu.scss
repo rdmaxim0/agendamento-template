@@ -1,181 +1,180 @@
-.services {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 0 24px;
-  width: 100%;
+.services-editorial {
+  background-color: var(--color-bg);
+  padding: 80px 20px;
 
-  /* Título + frase de apoio, alinhados à esquerda */
+  &__container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
   &__header {
-    max-width: 560px;
-    margin-bottom: 40px;
+    text-align: center;
+    margin-bottom: 60px;
 
     h2 {
       font-family: var(--font-display);
-      font-size: clamp(1.9rem, 4vw, 2.6rem);
-      font-weight: 600;
-      line-height: 1.1;
-      margin-bottom: 12px;
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 300;
+      color: var(--color-primary);
+      letter-spacing: -1px;
     }
 
     p {
       color: var(--color-muted);
-      line-height: 1.6;
+      font-size: 1.2rem;
+      margin-top: 16px;
+      max-width: 600px;
+      margin-inline: auto;
     }
   }
 
-  /* Lista em 2 colunas no desktop e 1 no celular */
-  &__list {
-    list-style: none;
+  &__grid {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    column-gap: 64px;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+  }
 
-    @media (max-width: 800px) {
-      grid-template-columns: minmax(0, 1fr); // permite a coluna encolher no celular
+  &__card {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    aspect-ratio: 3/4; // Mantém a proporção editorial
+    cursor: pointer;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    transition: transform 0.4s ease;
+    text-decoration: none; // Remove o sublinhado do link
+
+    &:hover {
+      transform: scale(1.03);
     }
-  }
 
-  /* Cada serviço é uma linha separada por um fio */
-  &__item {
-    min-width: 0; // sem isso o item "empurra" a coluna e a página ganha rolagem lateral
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    padding: 24px 0;
-    border-bottom: 1px solid var(--color-line);
-
-    // O combo ocupa a largura toda e ganha um bloco destacado
-    &--featured {
-      grid-column: 1 / -1;
-      margin-top: 24px;
-      padding: 28px;
-      background: var(--color-surface);
-      border: 1px solid var(--color-primary);
-      border-radius: 16px;
+    &-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 1;
     }
-  }
 
-  /* Nome ..... preço na mesma linha */
-  &__row {
-    display: flex;
-    align-items: baseline; // Alinha o texto pela base da letra
-    gap: 12px;
-    
-    // Adicionamos a quebra automática para nomes grandes (ex: Combo VIP)
-    flex-wrap: wrap; 
-  }
-
-  &__name {
-    min-width: 0; // deixa o nome quebrar linha em vez de alargar a linha
-    font-family: var(--font-display);
-    font-size: 1.3rem;
-    font-weight: 600;
-  }
-
-  &__badge {
-    align-self: flex-start; // Garante que a etiqueta fica colada acima se quebrar de linha
-    padding: 2px 10px;
-    border-radius: 999px;
-    background: var(--color-primary);
-    color: var(--color-on-primary);
-    font-size: 0.78rem;
-    font-weight: 700;
-    white-space: nowrap;
-    margin-top: -4px;
-    margin-bottom: 4px;
-  }
-
-  // O pontilhado que liga o nome ao preço: ocupa todo o espaço que sobra
-  &__leader {
-    flex: 1;
-    min-width: 16px;
-    border-bottom: 1px dotted var(--color-muted);
-    opacity: 0.6;
-    
-    // Esconde o pontilhado no mobile se a linha quebrar (para não ficar feio)
-    @media (max-width: 560px) {
-       display: none; 
-    }
-  }
-
-  &__price {
-    font-family: var(--font-display);
-    font-size: 1.3rem;
-    font-weight: 600;
-    color: var(--color-accent);
-    white-space: nowrap;
-    text-align: right;
-    font-variant-numeric: lining-nums tabular-nums; // números alinhados
-    
-    // No mobile, se a linha quebrar, o preço vai para o fundo da linha
-    @media (max-width: 560px) {
-       margin-left: auto;
-    }
-  }
-
-  &__old-price {
-    margin-right: 8px;
-    font-size: 0.95rem;
-    font-weight: 400;
-    color: var(--color-muted);
-  }
-
-  &__desc {
-    max-width: 46ch;
-    color: var(--color-muted);
-    line-height: 1.5;
-  }
-
-  &__duration {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 0.9rem;
-    color: var(--color-muted);
-  }
-
-  /* Rodapé: aviso do Pix + botão de agendar */
-  &__footer {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 20px;
-    margin-top: 40px;
-
-    p {
+    &-placeholder {
+      width: 100%;
+      height: 100%;
+      background-color: #26201e;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 1;
       display: flex;
       align-items: center;
-      gap: 10px;
-      max-width: 52ch;
-      color: var(--color-muted);
-      line-height: 1.5;
+      justify-content: center;
+    }
 
-      svg {
-        flex-shrink: 0;
-        color: var(--color-accent);
+    &-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        to bottom,
+        rgba(26, 22, 20, 0) 30%,
+        rgba(26, 22, 20, 0.95) 100%
+      );
+      z-index: 2;
+    }
+
+    &-content {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      padding: 30px 24px;
+      z-index: 3;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+
+      h3 {
+        font-size: 1.6rem;
+        font-weight: 400;
+        color: #f7efee; // Branco off-white
+        font-family: var(--font-display);
+        line-height: 1.2;
       }
+    }
+
+    &-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 4px;
+
+      .price {
+        font-size: 1.2rem;
+        color: var(--color-primary);
+        font-weight: 500;
+      }
+
+      .duration {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        color: #a89a97; // Cor muted mais clara
+        font-size: 0.9rem;
+      }
+    }
+  }
+
+  &__footer {
+    text-align: center;
+    margin-top: 80px;
+
+    .btn {
+      padding: 18px 42px;
+      font-size: 1.1rem;
+      letter-spacing: 0.5px;
     }
   }
 }
 
-/* Celulares: o bloco do combo fica mais compacto e o preço antigo vai para cima do novo */
-@media (max-width: 560px) {
-  .services {
-    &__item--featured {
-      padding: 20px;
+// Ajustes para telas menores (Tablets e Celulares)
+@media (max-width: 768px) {
+  .services-editorial {
+    padding: 60px 16px;
+
+    &__header {
+      margin-bottom: 40px;
     }
 
-    &__old-price {
-      display: block;
-      margin-right: 0;
+    &__grid {
+      // Reduz o tamanho mínimo da coluna para caber no celular
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
+      gap: 16px;
     }
-    
-    // NOVA REGRA: Força o nome do serviço a ocupar 100% no mobile
-    // Assim o preço e a etiqueta descem perfeitamente.
-    &__name {
-       width: 100%;
-       margin-bottom: 4px;
+
+    &__card {
+       // Diminui um pouco a altura no mobile para caber mais na tela
+       aspect-ratio: 4/5; 
+
+      &-content {
+        padding: 20px 16px;
+
+        h3 {
+          font-size: 1.4rem; 
+        }
+      }
+
+      &-meta {
+        .price {
+          font-size: 1.1rem;
+        }
+      }
+    }
+
+    &__footer {
+      margin-top: 60px;
     }
   }
 }
