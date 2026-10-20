@@ -11,6 +11,7 @@ import { useServices } from '../hooks/useServices';
 import { useAvailableSlots } from '../hooks/useAvailableSlots';
 import { useCreateAppointment } from '../hooks/useCreateAppointment';
 import { getErrorMessage } from '../lib/getErrorMessage';
+import { useProfessionals } from '../hooks/useProfessionals';
 import Calendar from '../components/Calendar';
 import '../styles/booking.scss';
 
@@ -44,6 +45,7 @@ export default function Booking() {
   const [checkoutResult, setCheckoutResult] = useState<{ method: PaymentMethod, appointmentId: string } | null>(null);
 
   const { data: services } = useServices();
+  const { data: professionalsList, isLoading: loadingProfs } = useProfessionals(serviceId);
   const createAppointment = useCreateAppointment();
   const isAdmin = user?.role === 'ADMIN';
 
@@ -262,6 +264,7 @@ export default function Booking() {
           {serviceId && (
             <motion.section {...fadeIn}>
               <h2>2. Escolha o profissional</h2>
+              {loadingProfs && <p>Buscando especialistas...</p>}
               <div className="booking__services">
                 <button
                   type="button"
@@ -272,14 +275,17 @@ export default function Booking() {
                   <span>Qualquer profissional disponível</span>
                 </button>
                 
-                <button
-                  type="button"
-                  onClick={() => handleSelectProfessional('id-placeholder')}
-                  className={`booking__service ${professionalId === 'id-placeholder' ? 'booking__service--active' : ''}`}
-                >
-                  <strong>Profissional Teste</strong>
-                  <span>Barbeiro/Cabeleireiro</span>
-                </button>
+                {professionalsList?.map((prof) => (
+                  <button
+                    key={prof.id}
+                    type="button"
+                    onClick={() => handleSelectProfessional(prof.id)}
+                    className={`booking__service ${professionalId === prof.id ? 'booking__service--active' : ''}`}
+                  >
+                    <strong>{prof.name}</strong>
+                    <span>Especialista</span>
+                  </button>
+                ))}
               </div>
             </motion.section>
           )}
@@ -320,7 +326,11 @@ export default function Booking() {
             <motion.section {...fadeIn} className="booking__summary">
               <h2>Resumo</h2>
               <p>{selectedService.name}</p>
-              <p>Profissional: {professionalId === 'ANY' ? 'Sem preferência' : 'Profissional Teste'}</p>
+              <p>Profissional: {
+                professionalId === 'ANY' 
+                  ? 'Sem preferência' 
+                  : professionalsList?.find(p => p.id === professionalId)?.name || 'Profissional'
+              }</p>
               <p>{format(date, "EEEE, dd 'de' MMMM", { locale: ptBR })} às {slot.label}</p>
 
               {isAdmin ? (
