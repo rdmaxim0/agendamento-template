@@ -7,6 +7,13 @@ export interface Service {
     duration: number; // em minutos
 }
 
+// NOVO: Profissional para o painel de administração
+export interface Professional {
+  id: string;
+  name: string;
+  isActive: boolean;
+}
+
 // Usuário que a API devolve no login (sem a senha, claro)
 export interface User {
   id: string;
@@ -47,6 +54,10 @@ export interface Appointment {
     price: number;
     duration: number;
   };
+  // NOVO: Adicionado para listar o profissional na tela do cliente
+  professional?: {
+    name: string;
+  } | null;
 }
 
 // Reserva como o ADMIN a recebe (GET /api/appointments): traz os dados do cliente
@@ -61,6 +72,10 @@ export interface AdminAppointment {
   customerPhone: string | null;
   user: { name: string; email: string; phone: string | null };
   service: { name: string; price: number };
+  // NOVO: Adicionado para mostrar na agenda do Admin
+  professional?: { 
+    name: string; 
+  } | null;
 }
 
 // Dados enviados ao criar ou editar um serviço
