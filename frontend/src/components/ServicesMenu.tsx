@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { CalendarPlus, Clock, ShieldCheck } from '@phosphor-icons/react';
+import { CalendarPlus, Clock, ShieldCheck, Sparkle } from '@phosphor-icons/react';
 import { useServices } from '../hooks/useServices';
 import { useBookingLink } from '../hooks/useBookingLink';
 import '../styles/services-menu.scss';
@@ -15,15 +15,14 @@ export default function ServicesMenu() {
   return (
     <section className="services" id="servicos" aria-labelledby="services-title">
       <header className="services__header">
-        <h2 id="services-title">Serviços em Destaque</h2>
-        <p>Veja o que fazemos, quanto dura e quanto custa. O horário você escolhe depois, no agendamento.</p>
+        <h2 id="services-title">Tratamentos em Destaque</h2>
+        <p>A união perfeita entre técnica avançada e os melhores produtos do mercado.</p>
       </header>
 
-      {isLoading && <p style={{ color: 'var(--color-muted)' }}>A carregar catálogo...</p>}
-      {isError && <p style={{ color: 'var(--color-danger)' }}>Não foi possível carregar os serviços.</p>}
+      {isLoading && <p style={{ color: 'var(--color-muted)' }}>A carregar tratamentos...</p>}
+      {isError && <p style={{ color: 'var(--color-danger)' }}>Não foi possível carregar as informações.</p>}
 
       <ul className="services__list">
-        {/* NOVA VERIFICAÇÃO: Array.isArray(services) impede que a tela quebre se a API falhar */}
         {Array.isArray(services) && services.slice(0, 4).map((service, index) => (
           <li
             key={service.id}
@@ -31,7 +30,7 @@ export default function ServicesMenu() {
           >
             <div className="services__row">
               <h3 className="services__name">{service.name}</h3>
-              {index === 3 && <span className="services__badge">Recomendado</span>}
+              {index === 3 && <span className="services__badge">Mais procurado</span>}
               <span className="services__leader" aria-hidden="true" />
               <span className="services__price">
                 {formatPrice(service.price)}
@@ -50,12 +49,12 @@ export default function ServicesMenu() {
 
       <footer className="services__footer">
         <p>
-          <ShieldCheck size={24} weight="duotone" />
-          Garanta sua vaga em segundos pagando via Pix, direto no agendamento.
+          <Sparkle size={24} weight="duotone" />
+          A sua transformação começa aqui. Agendamento prático com confirmação instantânea.
         </p>
         <Link {...bookingLink} className="btn btn--primary">
           <CalendarPlus size={22} weight="bold" />
-          Agendar horário
+          Ver disponibilidade
         </Link>
       </footer>
     </section>

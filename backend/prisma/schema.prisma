@@ -23,6 +23,18 @@ model User {
   updatedAt DateTime @updatedAt
 }
 
+model Professional {
+  id        String   @id @default(uuid())
+  name      String
+  isActive  Boolean  @default(true) 
+  
+  services     Service[]     
+  appointments Appointment[] 
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model Service {
   id          String  @id @default(uuid())
   name        String
@@ -31,6 +43,7 @@ model Service {
   duration    Int 
 
   appointments Appointment[]
+  professionals Professional[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -45,16 +58,17 @@ model Appointment {
   serviceId String
   service   Service @relation(fields: [serviceId], references: [id])
 
+  professionalId String? 
+  professional   Professional? @relation(fields: [professionalId], references: [id])
+
   startTime DateTime 
   endTime   DateTime 
 
   status String @default("PENDING")
 
-  // NOVO: 'PIX', 'PIX_MANUAL', 'CASH', 'MANUAL' (para admin)
   paymentMethod String  @default("PIX")
   paymentId     String? 
   
-  // NOVO: Valor para o qual o cliente precisa de troco (ex: paga 50, custa 30)
   changeFor     Float?
 
   customerName  String?

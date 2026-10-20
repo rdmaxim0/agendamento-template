@@ -1,68 +1,65 @@
 /* =====================================================
-   TOKENS DE TEMA
-   Todas as cores do site vêm destas variáveis. Para trocar de
-   tema, só mudamos o atributo data-theme na tag <html>
-   (feito pelo hook useTheme) e o CSS inteiro se adapta.
+   TOKENS DE TEMA - PALETA SALÃO DE BELEZA
    ===================================================== */
 
-// Tema escuro: é o padrão, por isso vale para :root e para data-theme="dark"
+// Tema escuro: Tons de café e rose gold luminoso
 :root,
 :root[data-theme='dark'] {
-  color-scheme: dark; // faz scrollbar e campos nativos acompanharem o tema
+  color-scheme: dark;
 
-  --color-bg: #0f0f12;
-  --color-surface: #1e1e24;
-  --color-line: #2e2e38; // bordas discretas
-  --color-line-strong: #43434f; // bordas de botões e destaques
-  --color-text: #f2f2f2;
-  --color-muted: #9a9aa5;
+  --color-bg: #1a1614; 
+  --color-surface: #26201e;
+  --color-line: #382e2c; 
+  --color-line-strong: #524340; 
+  --color-text: #f7efee;
+  --color-muted: #a89a97;
 
-  --color-primary: #d4a24c; // dourado: fundos de botão
-  --color-on-primary: #0f0f12; // texto que fica em cima do dourado
-  --color-accent: #d4a24c; // dourado para texto e ícones
-  --color-success: #4ade80;
-  --color-success-bg: #1d3a29; // fundo do selo "Confirmada"
-  --color-danger: #ff6b6b; // erros, cancelar, remover
-  --color-danger-bg: #3a2222; // fundo do selo "Cancelada"
-  --color-pending-bg: #3d3320; // fundo do selo "Aguardando pagamento"
-  --color-disabled: #444; // dias/itens desabilitados
+  --color-primary: #e0aba1; // Rose Gold suave
+  --color-on-primary: #1a1614; // Texto escuro sobre o fundo claro
+  --color-accent: #e0aba1; 
+  --color-success: #67c28b;
+  --color-success-bg: #1a3324;
+  --color-danger: #e57373; 
+  --color-danger-bg: #3b1d1d; 
+  --color-pending-bg: #3d2f23; 
+  --color-disabled: #4a3e3c; 
 
-  --hero-img-opacity: 0.6; // quanto o slider "escurece" a foto
-  --map-filter: invert(92%) hue-rotate(180deg) contrast(0.9) saturate(0.8); // mapa escuro
+  --hero-img-opacity: 0.55; 
+  --map-filter: invert(90%) hue-rotate(170deg) contrast(0.9) saturate(0.6); 
 
-  --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
-  --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.7);
+  --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.6);
 }
 
-// Tema claro: tem mais especificidade (:root + atributo), então sobrescreve o escuro
+// Tema claro: Fundo Nude/Blush com textos Expresso
 :root[data-theme='light'] {
   color-scheme: light;
 
-  --color-bg: #f5f5f7;
+  --color-bg: #fdfaf9; // Nude muito claro
   --color-surface: #ffffff;
-  --color-line: #e2e2e8;
-  --color-line-strong: #c4c4cf;
-  --color-text: #17171c;
-  --color-muted: #5f5f6b;
+  --color-line: #ebe1de;
+  --color-line-strong: #d6c6c3;
+  --color-text: #382b29; // Expresso profundo
+  --color-muted: #806c68;
 
-  --color-primary: #d4a24c;
-  --color-on-primary: #17171c;
-  --color-accent: #8a5d0c; // dourado mais escuro: o #d4a24c some em fundo branco
-  --color-success: #15803d;
-  --color-success-bg: #e3f5ea;
-  --color-danger: #c62828; // vermelho mais escuro: o claro some no fundo branco
-  --color-danger-bg: #fdecec;
-  --color-pending-bg: #fbf0da;
-  --color-disabled: #b4b4be;
+  --color-primary: #c2887e; // Rose Gold mais intenso para contraste
+  --color-on-primary: #ffffff;
+  --color-accent: #a36a60; 
+  --color-success: #2e8a53;
+  --color-success-bg: #e6f5ec;
+  --color-danger: #c94040; 
+  --color-danger-bg: #fceded;
+  --color-pending-bg: #fcf1e3;
+  --color-disabled: #c7b9b7;
 
-  --hero-img-opacity: 0.9;
-  --map-filter: none; // o mapa do Google já é claro
+  --hero-img-opacity: 0.85;
+  --map-filter: none; 
 
-  --shadow-sm: 0 4px 6px -1px rgba(20, 20, 30, 0.08);
-  --shadow-md: 0 12px 24px -6px rgba(20, 20, 30, 0.14);
+  --shadow-sm: 0 4px 6px -1px rgba(56, 43, 41, 0.06);
+  --shadow-md: 0 12px 24px -6px rgba(56, 43, 41, 0.1);
 }
 
-// Fonte de títulos e preços (carregada no index.html). Se falhar, cai no Georgia.
+// Mantemos a fonte serifada Fraunces, excelente para estética premium
 :root {
   --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
 }
@@ -81,20 +78,18 @@ body {
   background: var(--color-bg);
   color: var(--color-text);
   -webkit-font-smoothing: antialiased;
-  transition: background-color 0.3s ease, color 0.3s ease; // troca de tema suave
+  transition: background-color 0.3s ease, color 0.3s ease; 
 }
 
 a {
   text-decoration: none;
 }
 
-// Contorno visível para quem navega com teclado (acessibilidade)
 :focus-visible {
   outline: 2px solid var(--color-accent);
   outline-offset: 3px;
 }
 
-// Respeita quem desativou animações no sistema
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -106,33 +101,30 @@ a {
 
 /* =====================================================
    BOTÕES REUTILIZÁVEIS
-   Uso: <a className="btn btn--primary"> ou "btn btn--outline"
    ===================================================== */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
-  padding: 14px 24px;
-  border-radius: 12px;
+  padding: 14px 28px; // Botões ligeiramente mais largos
+  border-radius: 50px; // Cantos totalmente arredondados (pílula) transmitem mais delicadeza
   border: 1px solid transparent;
   font-size: 1rem;
-  font-weight: 700;
+  font-weight: 600; // Peso levemente reduzido
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 
-  // Botão cheio dourado (ação principal)
   &--primary {
     background: var(--color-primary);
     color: var(--color-on-primary);
 
     &:hover {
       transform: translateY(-2px);
-      box-shadow: 0 10px 22px rgba(212, 162, 76, 0.3);
+      box-shadow: 0 8px 20px rgba(194, 136, 126, 0.35);
     }
   }
 
-  // Botão só com borda (ação secundária)
   &--outline {
     border-color: var(--color-line-strong);
     color: var(--color-text);

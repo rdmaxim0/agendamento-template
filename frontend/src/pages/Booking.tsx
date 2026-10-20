@@ -28,6 +28,7 @@ export default function Booking() {
   const [searchParams] = useSearchParams();
 
   const [serviceId, setServiceId] = useState<string | null>(searchParams.get('service'));
+  const [professionalId, setProfessionalId] = useState<string | null>(null); 
   const [date, setDate] = useState<Date | null>(null);
   const [slot, setSlot] = useState<{ startTime: string; label: string } | null>(null);
 
@@ -40,7 +41,6 @@ export default function Booking() {
   const [createdAppointmentId, setCreatedAppointmentId] = useState<string | null>(null);
   const [pixData, setPixData] = useState<{ qrCode: string; qrCodeBase64: string } | null>(null);
   
-  // NOVO ESTADO: Para guardar o sucesso do Pix Manual ou Dinheiro e mostrar a respetiva tela
   const [checkoutResult, setCheckoutResult] = useState<{ method: PaymentMethod, appointmentId: string } | null>(null);
 
   const { data: services } = useServices();
@@ -79,6 +79,14 @@ export default function Booking() {
 
   function handleSelectService(id: string) {
     setServiceId(id);
+    setProfessionalId(null);
+    setDate(null);
+    setSlot(null);
+  }
+
+  function handleSelectProfessional(id: string) {
+    setProfessionalId(id);
+    setDate(null);
     setSlot(null);
   }
 
@@ -101,7 +109,7 @@ export default function Booking() {
       return;
     }
 
-    if (!serviceId || !slot || !selectedService) return;
+    if (!serviceId || !slot || !selectedService || !professionalId) return;
 
     if (manualDataInvalid) {
       toast.error('Informe o nome e o telefone do cliente.');
@@ -119,6 +127,7 @@ export default function Booking() {
     createAppointment.mutate(
       {
         serviceId,
+        professionalId: professionalId === 'ANY' ? null : professionalId,
         startTime: slot.startTime,
         ...(isAdmin
           ? { customerName: customerName.trim(), customerPhone: customerPhone.trim() }
@@ -138,7 +147,6 @@ export default function Booking() {
               setCreatedAppointmentId(data.appointment.id);
               if (data.pix?.qrCodeBase64) setPixData(data.pix);
             } else {
-              // SE FOR PIX_MANUAL OU CASH -> Aciona a tela de sucesso final!
               toast.success('Reserva registada com sucesso!');
               setCheckoutResult({ method: paymentMethod, appointmentId: data.appointment.id });
             }
@@ -153,12 +161,10 @@ export default function Booking() {
     <main className="booking">
       <h1>{isAdmin ? 'Reserva manual' : 'Agendar horário'}</h1>
 
-      {/* TELAS DE SUCESSO PARA PIX MANUAL OU DINHEIRO */}
       {checkoutResult ? (
         <motion.section {...fadeIn} className="booking__summary booking__pix">
           <h2>Reserva Registada!</h2>
           
-          {/* TELA: PIX MANUAL */}
           {checkoutResult.method === 'PIX_MANUAL' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', alignItems: 'center', textAlign: 'center', marginTop: '16px' }}>
               <p>Para garantir a sua vaga, transfira o valor exato para a nossa chave Pix:</p>
@@ -184,7 +190,6 @@ export default function Booking() {
             </div>
           )}
 
-          {/* TELA: DINHEIRO */}
           {checkoutResult.method === 'CASH' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', alignItems: 'center', textAlign: 'center', marginTop: '16px' }}>
               <div style={{ fontSize: '3rem' }}>💵</div>
@@ -203,7 +208,6 @@ export default function Booking() {
         </motion.section>
 
       ) : createdAppointmentId && !isAdmin && paymentMethod === 'PIX' ? (
-        /* TELA: PIX AUTOMÁTICO */
         <motion.section {...fadeIn} className="booking__summary booking__pix">
           <h2>Pagamento via Pix</h2>
           {paymentInfo?.appointmentStatus === 'CONFIRMED' ? (
@@ -234,7 +238,6 @@ export default function Booking() {
           )}
         </motion.section>
       ) : (
-        /* FLUXO NORMAL DE AGENDAMENTO */
         <>
           <section>
             <h2>1. Escolha o serviço</h2>
@@ -258,14 +261,39 @@ export default function Booking() {
 
           {serviceId && (
             <motion.section {...fadeIn}>
-              <h2>2. Escolha a data</h2>
+              <h2>2. Escolha o profissional</h2>
+              <div className="booking__services">
+                <button
+                  type="button"
+                  onClick={() => handleSelectProfessional('ANY')}
+                  className={`booking__service ${professionalId === 'ANY' ? 'booking__service--active' : ''}`}
+                >
+                  <strong>Sem preferência</strong>
+                  <span>Qualquer profissional disponível</span>
+                </button>
+                
+                <button
+                  type="button"
+                  onClick={() => handleSelectProfessional('id-placeholder')}
+                  className={`booking__service ${professionalId === 'id-placeholder' ? 'booking__service--active' : ''}`}
+                >
+                  <strong>Profissional Teste</strong>
+                  <span>Barbeiro/Cabeleireiro</span>
+                </button>
+              </div>
+            </motion.section>
+          )}
+
+          {serviceId && professionalId && (
+            <motion.section {...fadeIn}>
+              <h2>3. Escolha a data</h2>
               <Calendar selected={date} onSelect={handleSelectDate} />
             </motion.section>
           )}
 
-          {serviceId && date && (
+          {serviceId && professionalId && date && (
             <motion.section {...fadeIn}>
-              <h2>3. Escolha o horário</h2>
+              <h2>4. Escolha o horário</h2>
 
               {loadingSlots && <p>Buscando horários...</p>}
 
@@ -288,10 +316,11 @@ export default function Booking() {
             </motion.section>
           )}
 
-          {selectedService && date && slot && (
+          {selectedService && professionalId && date && slot && (
             <motion.section {...fadeIn} className="booking__summary">
               <h2>Resumo</h2>
               <p>{selectedService.name}</p>
+              <p>Profissional: {professionalId === 'ANY' ? 'Sem preferência' : 'Profissional Teste'}</p>
               <p>{format(date, "EEEE, dd 'de' MMMM", { locale: ptBR })} às {slot.label}</p>
 
               {isAdmin ? (

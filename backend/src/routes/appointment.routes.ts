@@ -12,10 +12,12 @@ export const appointmentRoutes = Router();
 const availableSchema = z.object({
   serviceId: z.string().min(1, "O serviço é obrigatório."),
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Use o formato AAAA-MM-DD."),
+  professionalId: z.string().nullable().optional().transform(val => val === 'null' ? null : val),
 });
 
 const createSchema = z.object({
   serviceId: z.string().min(1, "O serviço é obrigatório."),
+  professionalId: z.string().nullable().optional(),
   startTime: z.coerce.date(),
   customerName: z.string().min(2, "O nome do cliente é obrigatório.").optional(),
   customerPhone: z.string().min(8, "O telefone do cliente é obrigatório.").optional(),
@@ -29,11 +31,11 @@ const listSchema = z.object({
 
 appointmentRoutes.get('/available', async (req, res) => {
   try {
-    const { serviceId, date } = availableSchema.parse(req.query);
+    const { serviceId, date, professionalId } = availableSchema.parse(req.query);
     const service = await prisma.service.findUnique({ where: { id: serviceId } });
     if (!service) return res.status(404).json({ error: "Serviço não encontrado." });
 
-    const slots = await getAvailableSlots(date, service.duration);
+    const slots = await getAvailableSlots(date, service.duration, service.id, professionalId);
 
     return res.json({
       date,
@@ -51,7 +53,7 @@ appointmentRoutes.get('/available', async (req, res) => {
 
 appointmentRoutes.post('/', verifyToken, async (req: AuthRequest, res: any) => {
   try {
-    const { serviceId, startTime, customerName, customerPhone, paymentMethod, changeFor } = createSchema.parse(req.body);
+    const { serviceId, professionalId, startTime, customerName, customerPhone, paymentMethod, changeFor } = createSchema.parse(req.body);
     const isAdmin = req.userRole === 'ADMIN';
 
     if (!isAdmin && (customerName !== undefined || customerPhone !== undefined)) {
@@ -69,10 +71,10 @@ appointmentRoutes.post('/', verifyToken, async (req: AuthRequest, res: any) => {
     }
 
     const date = startTime.toLocaleDateString('en-CA', { timeZone: 'America/Sao_Paulo' });
-    const slots = await getAvailableSlots(date, service.duration);
+    const slots = await getAvailableSlots(date, service.duration, service.id, professionalId);
     const isFree = slots.some((s) => s.getTime() === startTime.getTime());
 
-    if (!isFree) return res.status(409).json({ error: "Horário indisponível. Escolha outro." });
+    if (!isFree) return res.status(409).json({ error: "Horário indisponível ou profissional ocupado. Escolha outro." });
 
     const endTime = new Date(startTime.getTime() + service.duration * 60_000);
 
@@ -80,6 +82,7 @@ appointmentRoutes.post('/', verifyToken, async (req: AuthRequest, res: any) => {
       data: {
         userId: req.userId as string,
         serviceId,
+        professionalId,
         startTime,
         endTime,
         paymentMethod: isAdmin ? 'MANUAL' : paymentMethod,
@@ -154,7 +157,10 @@ appointmentRoutes.get('/me', verifyToken, async (req: AuthRequest, res) => {
   try {
     const appointments = await prisma.appointment.findMany({
       where: { userId: req.userId as string },
-      include: { service: { select: { name: true, price: true, duration: true } } },
+      include: { 
+        service: { select: { name: true, price: true, duration: true } },
+        professional: { select: { name: true } }
+      },
       orderBy: { startTime: 'desc' },
     });
     return res.json(appointments);
@@ -225,6 +231,7 @@ appointmentRoutes.get('/', verifyToken, verifyAdmin, async (req, res: any) => {
       include: {
         user: { select: { name: true, email: true, phone: true } },
         service: { select: { name: true, price: true } },
+        professional: { select: { name: true } }
       },
       orderBy: { startTime: 'asc' },
     });

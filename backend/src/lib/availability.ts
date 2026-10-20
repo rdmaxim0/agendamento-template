@@ -1,7 +1,12 @@
 import { prisma } from '../server.js';
 import { startOfDay, endOfDay, parseISO, setHours, setMinutes, isBefore, isAfter, addMinutes } from 'date-fns';
 
-export async function getAvailableSlots(dateString: string, serviceDuration: number) {
+export async function getAvailableSlots(
+  dateString: string, 
+  serviceDuration: number,
+  serviceId: string,              // NOVO: Precisamos saber o serviço
+  professionalId?: string | null  // NOVO: E o profissional (se escolhido)
+) {
   const date = parseISO(dateString);
   
   // CONFIGURAÇÕES DO ESTABELECIMENTO
@@ -11,18 +16,39 @@ export async function getAvailableSlots(dateString: string, serviceDuration: num
   const lunchEndHour = 13;   // Fim do almoço
   const intervalMinutes = 30; // Mostrar horários a cada 30 min (09:00, 09:30, 10:00)
 
-  // Busca os agendamentos do dia que NÃO estão cancelados
-  const appointments = await prisma.appointment.findMany({
+  // 1. Busca os profissionais ativos que realizam ESTE serviço
+  const professionals = await prisma.professional.findMany({
     where: {
-      startTime: { gte: startOfDay(date), lte: endOfDay(date) },
-      status: { not: 'CANCELLED' }
+      isActive: true,
+      services: { some: { id: serviceId } }
     }
+  });
+
+  // Se não há ninguém cadastrado/ativo para este serviço, não há vagas
+  if (professionals.length === 0) return [];
+
+  // 2. Filtro base de agendamentos do dia
+  const appointmentFilter: any = {
+    startTime: { gte: startOfDay(date), lte: endOfDay(date) },
+    status: { not: 'CANCELLED' }
+  };
+
+  // Se escolheu um profissional, filtramos a agenda só dele. 
+  // Se for "Sem preferência", pegamos a agenda de TODOS que fazem o serviço.
+  if (professionalId) {
+    appointmentFilter.professionalId = professionalId;
+  } else {
+    appointmentFilter.professionalId = { in: professionals.map(p => p.id) };
+  }
+
+  const appointments = await prisma.appointment.findMany({
+    where: appointmentFilter
   });
 
   const slots: Date[] = [];
   const now = new Date();
 
-  // Gera os blocos de horário
+  // 3. Gera os blocos de horário
   for (let h = workStartHour; h < workEndHour; h++) {
     for (let m = 0; m < 60; m += intervalMinutes) {
       const slotStart = setMinutes(setHours(date, h), m);
@@ -39,17 +65,35 @@ export async function getAvailableSlots(dateString: string, serviceDuration: num
       const lunchEnd = setHours(date, lunchEndHour);
       if (isBefore(slotStart, lunchEnd) && isAfter(slotEnd, lunchStart)) continue;
 
-      // Regra 4: Detetor de Colisão (Se este intervalo choca com um agendamento existente)
-      const isOverlapping = appointments.some(appt => {
-        // Se o slot começa antes de um agendamento terminar E termina depois do agendamento começar = Colisão!
-        return isBefore(slotStart, appt.endTime) && isAfter(slotEnd, appt.startTime);
-      });
+      // Regra 4: Detetor de Colisão (A mágica do Salão)
+      let isAvailable = false;
 
-      if (!isOverlapping) {
+      if (professionalId) {
+        // Se o cliente quer um profissional específico, vemos se ELE tem colisão
+        const isOverlapping = appointments.some(appt => {
+          return isBefore(slotStart, appt.endTime) && isAfter(slotEnd, appt.startTime);
+        });
+        isAvailable = !isOverlapping;
+      } else {
+        // SEM PREFERÊNCIA: Verificamos se há pelo menos UM profissional livre neste horário
+        for (const prof of professionals) {
+          const profAppointments = appointments.filter(a => a.professionalId === prof.id);
+          const isOverlapping = profAppointments.some(appt => {
+            return isBefore(slotStart, appt.endTime) && isAfter(slotEnd, appt.startTime);
+          });
+          
+          if (!isOverlapping) {
+            isAvailable = true; // Achamos um livre! O horário fica disponível para o cliente
+            break; 
+          }
+        }
+      }
+
+      if (isAvailable) {
         slots.push(slotStart);
       }
     }
   }
 
-  return slots;
+  return slots;  
 }
