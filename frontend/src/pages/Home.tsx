@@ -1,61 +1,153 @@
-import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { CalendarPlus } from '@phosphor-icons/react';
-import ServicesMenu from '../components/ServicesMenu';
-import { useBookingLink } from '../hooks/useBookingLink';
-import LocationSection from '../components/LocationSection';
-import Footer  from '../components/Footer'
+import { useState, useMemo } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { 
+  MagnifyingGlassIcon, 
+  SparkleIcon, 
+  ScissorsIcon, 
+  HandHeartIcon, 
+  FlowerIcon,
+  UserIcon,
+  ClockIcon,
+  ArrowRightIcon
+} from '@phosphor-icons/react';
+import { useServices } from '../hooks/useServices';
+import { useAuth } from '../hooks/useAuth';
 import '../styles/home.scss';
 
-// Novas imagens: salão, estética e detalhes de beleza
-const HERO_IMAGES = [
-  "https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=1200&q=80",
-  "https://images.unsplash.com/photo-1522337660859-02fbefca4702?auto=format&fit=crop&w=1200&q=80",
-  "https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?auto=format&fit=crop&w=1200&q=80"
+// Categorias disponíveis no filtro
+const CATEGORIES = [
+  { id: 'Todos', label: 'Todos', icon: SparkleIcon },
+  { id: 'Cabelo', label: 'Cabelo', icon: ScissorsIcon },
+  { id: 'Unhas', label: 'Unhas', icon: HandHeartIcon },
+  { id: 'Estetica', label: 'Estética', icon: FlowerIcon },
 ];
 
 export default function Home() {
-  const [currentImage, setCurrentImage] = useState(0);
-  const bookingLink = useBookingLink();
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const { data: services, isLoading } = useServices();
+  
+  const [search, setSearch] = useState('');
+  const [activeCategory, setActiveCategory] = useState('Todos');
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentImage((prev) => (prev + 1) % HERO_IMAGES.length);
-    }, 4500); // Ligeiramente mais lento para uma transição relaxante
-    return () => clearInterval(timer);
-  }, []);
+  // Filtro Inteligente: Busca por texto + Categoria baseada em palavras-chave no nome do serviço
+  const filteredServices = useMemo(() => {
+    if (!Array.isArray(services)) return [];
+    
+    return services.filter(service => {
+      const matchSearch = service.name.toLowerCase().includes(search.toLowerCase());
+      
+      let matchCategory = true;
+      const name = service.name.toLowerCase();
+      
+      if (activeCategory === 'Cabelo') {
+        matchCategory = name.includes('corte') || name.includes('coloração') || name.includes('mechas') || name.includes('barba');
+      } else if (activeCategory === 'Unhas') {
+        matchCategory = name.includes('manicure') || name.includes('pedicure') || name.includes('gel');
+      } else if (activeCategory === 'Estetica') {
+        matchCategory = name.includes('pele') || name.includes('massagem') || name.includes('sobrancelha');
+      }
+
+      return matchSearch && matchCategory;
+    });
+  }, [services, search, activeCategory]);
 
   return (
-    <>
-    <main className="home">
-      <section className="home__slider">
-        {HERO_IMAGES.map((img, index) => (
-          <img
-            key={index}
-            src={img}
-            alt={`Destaque Salão ${index + 1}`}
-            className={`home__slider-img ${index === currentImage ? 'home__slider-img--active' : ''}`}
+    <main className="home-app">
+      {/* Cabeçalho Topo */}
+      <header className="home-app__header">
+        <div className="logo">
+          <FlowerIcon size={24} weight="fill" color="var(--color-primary)" />
+          <span>atelier.</span>
+        </div>
+        <button onClick={() => navigate(user ? '/perfil' : '/login')} className="login-btn">
+          <UserIcon size={18} />
+          {user ? 'Perfil' : 'Entrar'}
+        </button>
+      </header>
+
+      {/* Saudação e Pesquisa */}
+      <section className="home-app__greeting">
+        <span className="subtitle">UM TEMPO PARA VOCÊ</span>
+        <div className="title-row">
+          <h1>O que vamos cuidar hoje?</h1>
+          <Link to="/servicos" className="see-all">Ver todos <ArrowRightIcon size={14} weight="bold" /></Link>
+        </div>
+
+        <div className="search-bar">
+          <MagnifyingGlassIcon size={20} color="var(--color-muted)" />
+          <input 
+            type="text" 
+            placeholder="Qual serviço você procura?" 
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
           />
-        ))}
-        <div className="home__slider-overlay"></div>
-      </section>
-
-      <section className="home__hero">
-        <div className="home__hero-content">
-          <h1>Realce a sua beleza autêntica.</h1>
-          <p>Um momento só seu. Cuidado, estética e bem-estar numa experiência premium do início ao fim.</p>
-
-          <Link {...bookingLink} className="home__cta">
-            <CalendarPlus size={24} weight="bold" />
-            Agendar o meu momento
-          </Link>
         </div>
       </section>
 
-      <ServicesMenu />
-      <LocationSection />
+      {/* Carrossel de Categorias */}
+      <nav className="home-app__categories">
+        {CATEGORIES.map(cat => {
+          const Icon = cat.icon;
+          const isActive = activeCategory === cat.id;
+          return (
+            <button 
+              key={cat.id} 
+              className={`category-chip ${isActive ? 'category-chip--active' : ''}`}
+              onClick={() => setActiveCategory(cat.id)}
+            >
+              <Icon size={18} weight={isActive ? "fill" : "regular"} />
+              {cat.label}
+            </button>
+          );
+        })}
+      </nav>
+
+      {/* Lista de Serviços */}
+      <section className="home-app__services">
+        {isLoading && <p className="loading">Buscando tratamentos...</p>}
+        {!isLoading && filteredServices.length === 0 && (
+          <p className="empty">Nenhum serviço encontrado para esta busca.</p>
+        )}
+
+        <div className="services-list">
+          {filteredServices.map(service => {
+            // Define uma tag visual baseada no nome para imitar o design
+            const tag = service.name.includes('Corte') || service.name.includes('Coloração') ? 'Cabelo' 
+                      : service.name.includes('Manicure') || service.name.includes('Gel') ? 'Unhas' 
+                      : 'Estética';
+
+            return (
+              <article key={service.id} className="service-card">
+                <div className="service-card__image">
+                  {service.imageUrl ? (
+                    <img src={service.imageUrl} alt={service.name} />
+                  ) : (
+                    <div className="placeholder"><SparkleIcon size={24} /></div>
+                  )}
+                </div>
+                
+                <div className="service-card__info">
+                  <span className="tag">{tag}</span>
+                  <h3>{service.name}</h3>
+                  <span className="duration">
+                    <ClockIcon size={14} /> {service.duration} min
+                  </span>
+                  
+                  <div className="bottom-row">
+                    <span className="price">
+                      {service.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                    </span>
+                    <Link to={`/agendar?service=${service.id}`} className="book-btn">
+                      Agendar <ArrowRightIcon size={14} weight="bold" />
+                    </Link>
+                  </div>
+                </div>
+              </article>
+            );
+          })}
+        </div>
+      </section>
     </main>
-    <Footer />
-    </>
   );
 }
