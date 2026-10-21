@@ -1,0 +1,39 @@
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: var(--color-surface);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 12px 0;
+  padding-bottom: calc(12px + env(safe-area-inset-bottom)); // Respeita a barrinha preta do iPhone
+  border-top: 1px solid var(--color-line);
+  z-index: 1000;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.03);
+
+  &__item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    color: var(--color-muted);
+    text-decoration: none;
+    transition: color 0.2s ease;
+
+    span {
+      font-size: 0.7rem;
+      font-weight: 500;
+    }
+
+    &--active {
+      color: var(--color-primary); // O tom Cereja/Magenta do seu tema
+
+      .icon {
+        // No Phosphor, podemos forçar um stroke mais grosso ou tentar usar CSS fill se suportado
+        stroke-width: 16px; 
+      }
+    }
+  }
+}
