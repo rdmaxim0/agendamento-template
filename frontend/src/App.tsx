@@ -1,46 +1,19 @@
-import { Routes, Route } from 'react-router-dom';
-import Header from './components/Header';
-import ProtectedRoute from './components/ProtectedRoute';
-import Home from './pages/Home';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import Booking from './pages/Booking';
-import MyAppointments from './pages/MyAppointments';
-import AdminRoute from './components/AdminRoute';
-import AdminDashboard from './pages/AdminDashboard';
-import Services from './pages/Services'
-
+import { Outlet } from 'react-router-dom';
+import BottomNav from './components/BottomNav';
+import { Toaster } from 'sonner';
+// Apague as importações antigas do <Header /> e <Footer /> se elas existirem aqui
 
 export default function App() {
   return (
-    <>
-      <Header />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/agendar" element={<Booking />} />
-        <Route path="/servicos" element={<Services />} />
+    <div className="app-container" style={{ paddingBottom: '80px', backgroundColor: 'var(--color-bg)', minHeight: '100vh' }}>
+      {/* O Header global sumiu. Vamos criar topos específicos por página para ficar igual ao seu print */}
+      
+      <main>
+        <Outlet /> {/* Aqui renderizam as páginas (Home, Booking, etc.) */}
+      </main>
 
-        <Route
-          path="/admin"
-          element={
-            <AdminRoute>
-              <AdminDashboard />
-            </AdminRoute>
-          }
-        />
-
-        {/* Só abre se estiver logado; senão vai para o login e depois volta */}
-        <Route
-          path="/meus-agendamentos"
-          element={
-            <ProtectedRoute>
-              <MyAppointments />
-            </ProtectedRoute>
-          }
-        />
-      </Routes>
-    </>
+      <BottomNav />
+      <Toaster position="top-center" richColors />
+    </div>
   );
 }
